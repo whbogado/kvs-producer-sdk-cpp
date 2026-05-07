@@ -1327,7 +1327,9 @@ gst_kvs_sink_handle_buffer (GstCollectPads * pads,
                         (GST_BUFFER_FLAGS(buf) == GST_BUFFER_FLAG_DISCONT) ||
                         (GST_BUFFER_FLAG_IS_SET(buf, GST_BUFFER_FLAG_DISCONT) && GST_BUFFER_FLAG_IS_SET(buf, GST_BUFFER_FLAG_DELTA_UNIT)) ||
                         // drop if buffer contains header and has invalid timestamp
-                        (GST_BUFFER_FLAG_IS_SET(buf, GST_BUFFER_FLAG_HEADER) && (!GST_BUFFER_PTS_IS_VALID(buf) || !GST_BUFFER_DTS_IS_VALID(buf)));
+                        // changed according to: https://github.com/awslabs/amazon-kinesis-video-streams-producer-sdk-cpp/discussions/1008#discussioncomment-5850733
+                        // disable DST check as some cameras don't set it
+                        (GST_BUFFER_FLAG_IS_SET(buf, GST_BUFFER_FLAG_HEADER) && (!GST_BUFFER_PTS_IS_VALID(buf)));
         if (isDroppable) {
             LOG_DEBUG("Dropping frame with flag: " << GST_BUFFER_FLAGS(buf) << " for " << kvssink->stream_name);
             goto CleanUp;
